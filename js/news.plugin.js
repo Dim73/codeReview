@@ -36,7 +36,7 @@
                 newsUrl =  opt.newsLoadUrl,
                 historyPath = opt.historyPath;//isSpecial?'/adv/sp/':'/press/';
 
-            var nFilter = {
+            var nFilter = { //фильтры новостей
                 init: function() {
                     var self = this;
                     self.param = {};
@@ -117,7 +117,7 @@
 
 
                     self.clearInput(true);
-                    self.$group.each(function(){
+                    self.$group.each(function(){ //инициализация значений фильтров
                         var $group = $(this),
                             gVariants = [],
                             gAlias = '';
@@ -129,7 +129,7 @@
                                     $filter = $('.variant-filter[data-for='+forFilter+']'),
                                     $rChild = $('.variant-filter[data-for='+$elm.data('relation')+']');
 
-                                gVariants.push({
+                                gVariants.push({ //данные по фильтрам
                                     elm: $elm,
                                     isDefault: $elm.is('.active'),
                                     isActive: $elm.is('.active'),
@@ -178,7 +178,7 @@
                         self.$relationVariant.trigger('change');
                     }
 
-                    //apply btn
+                    //отправка фильтров
                     self.$sortApply.bind('click',function(){
                         self.setFilter();
                         self.sortToggle(false);
@@ -202,7 +202,7 @@
                     self.applyFilter();
 
                 },
-                setVariant: function(cG, cV) {
+                setVariant: function(cG, cV) { //контроллер фильтров
                     var self = this;
                     self.cG = cG;
                     self.cV = cV;
@@ -222,7 +222,7 @@
                         self.applyFilter();
                     }
                 },
-                updateRelationship: function(cG, cV) {
+                updateRelationship: function(cG, cV) { //обновление зависимых фильтров
                     var self = this;
                     var cv = self.data[cG].groupVariants[cV];
                     $.ajax({
@@ -238,7 +238,7 @@
                         }
                     });
                 },
-                setActive: function(cG, cV) {
+                setActive: function(cG, cV) { //установка активного фильтра
                     var self = this;
                     for (var i in self.data[cG].groupVariants) {
                         self.data[cG].groupVariants[i].isActive = false;
@@ -256,7 +256,7 @@
                         }
                     }
                 },
-                sortToggle: function(isOpen) {
+                sortToggle: function(isOpen) { //рендеринг открытия панели с фильтрами
                     //isOpen = isOpen || !$self.is('.sort-is-open');
                     var self = this;
                     $self.toggleClass('sort-is-open',isOpen);
@@ -275,13 +275,13 @@
                         self.$filterPane.height(self.$filterPane.height() > 0?0:self.filterHeight);
                     }
                 },
-                setDefault: function(cG) {
+                setDefault: function(cG) { //установка дефолтного значения фильтра
                     var self = this;
                     for (var i in self.data[cG].groupVariants) {
                         self.data[cG].groupVariants[i].isDefault = self.data[cG].groupVariants[i].isActive;
                     }
                 },
-                revertDefault: function(cG) {
+                revertDefault: function(cG) { //возврат к дефолтному значению если группа фильтров пуста
                     var self = this,
                         defFind = false;
                     for (var i in self.data[cG].groupVariants) {
@@ -297,7 +297,7 @@
                         self.setDefault(cG);
                     }
                 },
-                setFilter: function() {
+                setFilter: function() { //добавление фильтра
                     var self = this;
                     for (var n in self.data) {
                         for (var i in self.data[n].groupVariants) {
@@ -305,7 +305,7 @@
                         }
                     }
                 },
-                filterSetValues: function(n,i, onlySet) {
+                filterSetValues: function(n,i, onlySet) { //обновление состояний фильтров
                     var self = this;
                     var cv = self.data[n].groupVariants[i],
                         filterIsFill = false;
@@ -350,7 +350,7 @@
                         }
                     }
                 },
-                applyFilter: function() {
+                applyFilter: function() { //сбор активных фильтров и отправка
                     var self = this;
                     self.setFilter();
                     for (var n in self.data) {
@@ -368,7 +368,7 @@
                     }
                     nFeed.load(true);
                 },
-                getParam: function() {
+                getParam: function() { //получение активных фильтров для запроса
                     var self = this;
                     return self.param;
                 },
@@ -384,7 +384,7 @@
                         $(this).removeAttr('checked').trigger('refresh');
                     });
                 },
-                getVariant : function(val, func) {
+                getVariant : function(val, func) { //декоративная функция для заданного фильтра
                     for (var n in self.data) {
                         for (var i in self.data[n].groupVariants) {
                             var cv = self.data[n].groupVariants[i];
@@ -394,7 +394,7 @@
                         }
                     }
                 },
-                scorllInit : function(elm) {
+                scorllInit : function(elm) { //инициализация скроллера у группы фильтров
                     var $scroller = elm || this.$variantFilter;
                     if ($scroller.find('.nano-content').length) {
                         $scroller.nanoScroller({sliderMaxHeight: 50, iOSNativeScrolling: false});
@@ -402,7 +402,7 @@
                 }
             };
 
-            var nFeed = {
+            var nFeed = { //лента новостей
                 init: function() {
                     var self = this;
                     self.url = feedUrl;
@@ -423,7 +423,7 @@
                         return false;
                     });
                 },
-                load : function(reset) {
+                load : function(reset) { //отправка фильтров на сервер и получение результата
                     var self = this;
                     self.reset = !!reset;
 
@@ -440,13 +440,13 @@
                         }
                     });
                 },
-                getPostData : function() {
+                getPostData : function() { //получение активных фильтров + текущая страница для отправки
                     var self = this;
                     var filterParam = nFilter.getParam();
                     filterParam.page = self.page = self.reset?0:++self.page;
                     return filterParam;
                 },
-                render : function (response) {
+                render : function (response) { //рендер ленты новостей
                     var self = this;
                     var $newData = $(response.data);
                     var isPrevMain = false;
@@ -481,7 +481,7 @@
                     self.$colCenter.append(itemsCenter);
                     self.newsAnimate();
                 },
-                reset: function () {
+                reset: function () { //сброс активной страницы
                     var self = this;
                     self.page = 0;
                     self.reset = true;
@@ -491,7 +491,7 @@
                 }
             };
 
-            var nShow = {
+            var nShow = { //показ текущей новости
                 init: function() {
                     var self = this;
                     self.$popup = $('<div class="b-news__popup"><div class="b-news__holder"> <div class="b-news"> <a class="b-news__close" href="#"></a> <div class="b-news__inner"> </div></div></div></div>');//$(opt.newsRead + '__popup');
@@ -528,7 +528,7 @@
                     });
 
                 },
-                loadNews: function(alias) {
+                loadNews: function(alias) { //загрузка новости по алиасу
                     var self = this;
                     if (self.alias === alias) {
                         self.showPopup(true);
@@ -546,12 +546,12 @@
                         }
                     });
                 },
-                render: function(data) {
+                render: function(data) { //рендер текущей новости
                     var self = this;
                     self.$popupLoad.html(data);
                     self.showPopup();
                 },
-                showPopup: function(justShow) {
+                showPopup: function(justShow) { //рендер попапа
                     var self = this;
                     History.pushState(null, documentTitle, historyPath + self.alias+'/');
                     $('body').addClass('is-popup-showed');
@@ -560,7 +560,7 @@
                         justShow || (function(){self.afterShow()})();
                     }).scrollTop(0);
                 },
-                afterShow: function() {
+                afterShow: function() { //инициализация контента новости
                     var self = this;
                     self.$gallery = self.$popupLoad.find(opt.galleryClass);
                     !self.$gallery || self.$gallery.galleryPhoto(opt.galleryOpt).css('visibility','visible');
@@ -597,7 +597,7 @@
                         $('.career-stat-item', self.$statSlider).find('.stat-list').addClass('anim-start');
                     }
                 },
-                beforeClose: function() {
+                beforeClose: function() { //действия при закрытии попапа
                     var self = this;
                     if (self.isShow) {
                         History.back();
@@ -606,7 +606,7 @@
                     }
                     self.isShow = false;
                 },
-                closePopup: function() {
+                closePopup: function() { //закрытие попапа
                     var self = this;
                     self.$popup.fadeOut(500,function(){
                         $('body').removeClass('is-popup-showed');
